@@ -5,6 +5,7 @@
 #include "memlog.h"
 #include "Dicionario_AVL.hpp"
 #include <fstream>
+#include <string>
 using namespace std;
 
 string arquivo_entrada;
@@ -88,9 +89,12 @@ int main(int argc, char *argv[]){
     // }
 
     Dicionario_AVL alunos;
-    int opcao, imp;
-    char tipo, palavra[30], significado[100]
-    bool busca = false;
+    //int opcao, imp;
+    char palavra[30], significado[100];
+    string palavra_conv, significado_conv;
+    char tipo;
+    int palavra_size;
+    int significado_size;
 
     try{
     // ifstream entrada;
@@ -98,25 +102,35 @@ int main(int argc, char *argv[]){
     // if(!entrada.is_open()){
     //     throw "Nao foi possivel abrir o arquivo de entrada";
     // }
-    // ofstream saida;
-    // saida.open(arquivo_saida, ios::app);
-    // if(!saida.is_open()){
-    //     throw "Nao foi possivel abrir o arquivo de saida";
-    // }
+        ofstream saida;
+        saida.open("saida.txt", ios::out);
+        if(!saida.is_open()){
+            throw "Nao foi possivel abrir o arquivo de saida";
+        }
 
-    FILE *entrada = fopen("entrada.txt","r");
-    if(entrada==NULL){
-        throw "Erro na abertura do arquivo de entrada";
-    }
-    do{
-        fscanf(entrada,"%s %s %[^\n]",tipo,palavra,significado);
+        FILE *entrada = fopen("entrada.txt","r");
+        if(entrada==NULL){
+            throw "Erro na abertura do arquivo de entrada";
+        }
+
+        do{
+            fscanf(entrada,"%c %[^]] %[^\n]", &tipo, palavra,significado);
+            palavra_size = sizeof(palavra)/sizeof(char);
+            significado_size = sizeof(significado)/sizeof(char);
+            palavra_conv = convertToString(palavra,palavra_size);
+            significado_conv = convertToString(significado,significado_size);
+            //palavra_conv.erase(0,1);
+
+            saida << tipo << endl;
+            Verbete verbete(tipo, palavra_conv, significado);
+            if(alunos.estacheio())
+                cout << "A arvore esta cheia!\n";
+            else
+                alunos.inserir(verbete);
+        } while(!feof(entrada));
+
+        fclose(entrada);
         
-        Verbete verbete(tipo,palavra, significado);
-        if(alunos.estacheio())
-            cout << "A arvore esta cheia!\n";
-        else
-            alunos.inserir(verbete);
-    } while(opcao!=0);
 
     } catch (const char *e){
         cout << "ERRO" << e << endl;

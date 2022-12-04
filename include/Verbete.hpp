@@ -8,14 +8,17 @@ class Verbete{
     private:
         char tipo;
         string verbete;
-        Fila_Significado significado;
+        string significado;
+        Fila_Significado fila_significado;
 
     public:
         Verbete(){}
         Verbete(string verbete);
         Verbete(char tipo, string verbete, string significado);
+        void inserir_significado(string significado);
         void imprimir_significado();
         string get_Verbete();
+        string get_Significado();
 };
 
 #endif

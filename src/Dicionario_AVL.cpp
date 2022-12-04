@@ -48,7 +48,8 @@ bool Dicionario_AVL::estacheio()
 
 void Dicionario_AVL::inserir(Verbete verbete){
     bool cresceu;
-    insererecursivo(raiz, verbete, cresceu);
+    buscar(verbete, raiz, cresceu);
+    //insererecursivo(raiz, verbete, cresceu);
 }
 
 void Dicionario_AVL::insererecursivo(No*& noatual, Verbete verbete, bool& cresceu)
@@ -140,20 +141,21 @@ void Dicionario_AVL::obterSucessor(Verbete& AlunoSucessor, No* temp)
     AlunoSucessor = temp->verbete;
 }
 
-void Dicionario_AVL::buscar(Verbete& verbete, bool& busca)
+void Dicionario_AVL::buscar(Verbete& verbete, No*& raiz, bool &cresceu)
 {
-    busca = false;
     No* noatual = raiz;
     while (noatual != NULL){
         if (verbete.get_Verbete() < noatual->verbete.get_Verbete()){
             noatual = noatual->esquerda;
         } else if (verbete.get_Verbete() > noatual->verbete.get_Verbete()){
             noatual = noatual->direita;
-        } else{
-            busca = true;
+        } else if(verbete.get_Verbete() == noatual->verbete.get_Verbete()){
             verbete = noatual->verbete;
+            noatual->verbete.inserir_significado(verbete.get_Significado());
             break;
         }
+        else
+            insererecursivo(raiz, verbete, cresceu);
     }
 }
 
