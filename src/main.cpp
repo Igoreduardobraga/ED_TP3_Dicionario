@@ -91,22 +91,9 @@ int main(int argc, char *argv[]){
     Dicionario_AVL alunos;
     //int opcao, imp;
     char palavra[30], significado[100];
-    string palavra_conv, significado_conv;
     char tipo;
-    int palavra_size;
-    int significado_size;
 
     try{
-    // ifstream entrada;
-    // entrada.open(arquivo_entrada, std::ios::in);
-    // if(!entrada.is_open()){
-    //     throw "Nao foi possivel abrir o arquivo de entrada";
-    // }
-        ofstream saida;
-        saida.open("saida.txt", ios::out);
-        if(!saida.is_open()){
-            throw "Nao foi possivel abrir o arquivo de saida";
-        }
 
         FILE *entrada = fopen("entrada.txt","r");
         if(entrada==NULL){
@@ -114,23 +101,21 @@ int main(int argc, char *argv[]){
         }
 
         do{
-            fscanf(entrada,"%c %[^]] %[^\n]", &tipo, palavra,significado);
-            palavra_size = sizeof(palavra)/sizeof(char);
-            significado_size = sizeof(significado)/sizeof(char);
-            palavra_conv = convertToString(palavra,palavra_size);
-            significado_conv = convertToString(significado,significado_size);
-            //palavra_conv.erase(0,1);
-
-            saida << tipo << endl;
-            Verbete verbete(tipo, palavra_conv, significado);
+            fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
+            string palavra_conv(palavra);
+            string significado_conv(significado);
+            palavra_conv.erase(0,1);
+            significado_conv.erase(0,2);
+            Verbete verbete(tipo, palavra_conv, significado_conv);
             if(alunos.estacheio())
                 cout << "A arvore esta cheia!\n";
             else
                 alunos.inserir(verbete);
+
+            alunos.imprimiremordem(alunos.obterRaiz());
         } while(!feof(entrada));
 
         fclose(entrada);
-        
 
     } catch (const char *e){
         cout << "ERRO" << e << endl;

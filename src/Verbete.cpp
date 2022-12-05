@@ -3,6 +3,7 @@
 Verbete::Verbete(char tipo, string verbete, string significado){
     this->tipo = tipo;
     this->verbete = verbete;
+    this->significado = significado;
     inserir_significado(significado);
 }
 
@@ -10,8 +11,8 @@ Verbete::Verbete(string verbete){
     this->verbete = verbete;
 }
 
-void Verbete::imprimir_significado(){
-    this->fila_significado.imprimir();
+void Verbete::imprimir_significado(ofstream *saida){
+    this->fila_significado.imprimir(&saida);
 }
 
 void Verbete::inserir_significado(string significado){

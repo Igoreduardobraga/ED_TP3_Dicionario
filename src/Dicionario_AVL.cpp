@@ -1,15 +1,16 @@
 #include <iostream>
 #include <cstddef>
-#include "Dicionario_AVL.hpp"
+#include <fstream>
+#include "Dicionario_AVL.hpp" //modificado
 
 using namespace std;
 
-Dicionario_AVL::Dicionario_AVL()
+Dicionario_AVL::Dicionario_AVL() // construtor  //mudounome
 {
     raiz = NULL;
 }
 
-Dicionario_AVL::~Dicionario_AVL()
+Dicionario_AVL::~Dicionario_AVL() // destrutor //mudounome
 {
     deletarDicionario(raiz);
 }
@@ -46,14 +47,19 @@ bool Dicionario_AVL::estacheio()
     }
 }
 
-void Dicionario_AVL::inserir(Verbete verbete){
+void Dicionario_AVL::inserir(Verbete verbete) //modificada
+{
     bool cresceu;
-    buscar(verbete, raiz, cresceu);
-    //insererecursivo(raiz, verbete, cresceu);
+    if(!inseriu_primeiro){
+        insererecursivo(raiz,verbete,cresceu);
+        inseriu_primeiro = true;
+    }
+    else
+        buscar(verbete,cresceu);
 }
 
 void Dicionario_AVL::insererecursivo(No*& noatual, Verbete verbete, bool& cresceu)
-{
+{ // novo
     if (noatual == NULL) {
         noatual = new No;
         noatual->direita = NULL;
@@ -81,14 +87,14 @@ void Dicionario_AVL::insererecursivo(No*& noatual, Verbete verbete, bool& cresce
     }
 }
 
-void Dicionario_AVL::remover(Verbete verbete)
+void Dicionario_AVL::remover(Verbete verbete) //modificada
 {
     bool diminuiu;
     removerbusca(verbete, raiz, diminuiu);
 }
 
 void Dicionario_AVL::removerbusca(Verbete verbete, No*& noatual, bool& diminuiu)
-{
+{ //modificada
     if (verbete.get_Verbete() < noatual->verbete.get_Verbete()){
         removerbusca(verbete, noatual->esquerda, diminuiu);
         if (diminuiu){
@@ -141,8 +147,9 @@ void Dicionario_AVL::obterSucessor(Verbete& AlunoSucessor, No* temp)
     AlunoSucessor = temp->verbete;
 }
 
-void Dicionario_AVL::buscar(Verbete& verbete, No*& raiz, bool &cresceu)
+void Dicionario_AVL::buscar(Verbete& verbete, bool &cresceu)
 {
+    bool encontrou = false;
     No* noatual = raiz;
     while (noatual != NULL){
         if (verbete.get_Verbete() < noatual->verbete.get_Verbete()){
@@ -150,19 +157,20 @@ void Dicionario_AVL::buscar(Verbete& verbete, No*& raiz, bool &cresceu)
         } else if (verbete.get_Verbete() > noatual->verbete.get_Verbete()){
             noatual = noatual->direita;
         } else if(verbete.get_Verbete() == noatual->verbete.get_Verbete()){
-            verbete = noatual->verbete;
+            encontrou = true;
             noatual->verbete.inserir_significado(verbete.get_Significado());
             break;
         }
-        else
-            insererecursivo(raiz, verbete, cresceu);
     }
+    if(!encontrou){
+        insererecursivo(raiz, verbete, cresceu);
+    }
+
 }
 
 void Dicionario_AVL::imprimirpreordem(No* Noatual)
 {
     if (Noatual != NULL){
-        //cout << Noatual->verbete.obterNome() << ": ";
         cout << Noatual->verbete.get_Verbete() << endl;
 
         imprimirpreordem(Noatual->esquerda);
@@ -173,12 +181,16 @@ void Dicionario_AVL::imprimirpreordem(No* Noatual)
 
 void Dicionario_AVL::imprimiremordem(No* Noatual)
 {
+    ofstream saida;
+    saida.open("saida.txt", ios::out);
+    if(!saida.is_open()){
+        throw "Nao foi possivel abrir o arquivo de saida";
+    }
     if (Noatual != NULL){
         imprimiremordem(Noatual->esquerda);
 
-        //cout << Noatual->verbete.obterNome() << ": ";
-        cout << Noatual->verbete.get_Verbete() << endl;
-        Noatual->verbete.imprimir_significado();
+        saida << Noatual->verbete.get_Verbete() << endl;
+        Noatual->verbete.imprimir_significado(&saida);
 
         imprimiremordem(Noatual->direita);            
     }
@@ -191,7 +203,6 @@ void Dicionario_AVL::imprimirposordem(No* Noatual)
 
         imprimirposordem(Noatual->direita);
 
-        //cout << Noatual->verbete.obterNome() << ": ";
         cout << Noatual->verbete.get_Verbete() << endl;            
     }
 }

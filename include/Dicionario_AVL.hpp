@@ -17,6 +17,7 @@ struct No{
 class Dicionario_AVL{
     private:
         No* raiz;
+        bool inseriu_primeiro = false;
 
     public:
         Dicionario_AVL();
@@ -30,7 +31,7 @@ class Dicionario_AVL{
         void removerbusca(Verbete verbete, No*& noatual, bool& diminuiu);
         void deletarNo(No*& noatual, bool& diminuiu);
         void obterSucessor(Verbete& AlunoSucessor, No* temp);
-        void buscar(Verbete& verbete, No*& noatual, bool &cresceu);
+        void buscar(Verbete& verbete, bool &cresceu);
         void imprimirpreordem(No* Noatual);
         void imprimiremordem(No* Noatual);
         void imprimirposordem(No* Noatual);

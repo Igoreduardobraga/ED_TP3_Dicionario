@@ -1,5 +1,6 @@
 #include "Fila_Significado.hpp"
 #include <cstddef>
+#include <fstream>
 #include <new>
 using namespace std;
 
@@ -70,7 +71,7 @@ void Fila_Significado::remover() //dequeue //pop
     }
 }
 
-void Fila_Significado::imprimir() //print
+void Fila_Significado::imprimir(ofstream **saida) //print
 {
     No_Fila* temp = primeiro;
     if(estavazio()){

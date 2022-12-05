@@ -23,7 +23,7 @@ class Fila_Significado{
         bool estacheio(); 
         void inserir(TipoItem significado); 
         void remover();
-        void imprimir();
+        void imprimir(ofstream **saida);
 };
 
 #endif
