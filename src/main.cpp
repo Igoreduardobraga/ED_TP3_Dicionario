@@ -4,6 +4,7 @@
 #include "msgassert.h"
 #include "memlog.h"
 #include "Dicionario_AVL.hpp"
+#include "Dicionario_Hash.hpp"
 #include <fstream>
 #include <string>
 using namespace std;
@@ -81,45 +82,69 @@ int main(int argc, char *argv[]){
     //     desativaMemLog();
     // }
 
-    // if(implementacao=="avl"){
+    implementacao = "hash";
 
-    // }
-    // else{
-        
-    // }
-
-    Dicionario_AVL alunos;
-    //int opcao, imp;
-    char palavra[30], significado[100];
-    char tipo;
-
-    try{
-
-        FILE *entrada = fopen("entrada.txt","r");
-        if(entrada==NULL){
-            throw "Erro na abertura do arquivo de entrada";
-        }
-
-        do{
-            fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
-            string palavra_conv(palavra);
-            string significado_conv(significado);
-            palavra_conv.erase(0,1);
-            significado_conv.erase(0,2);
-            Verbete verbete(tipo, palavra_conv, significado_conv);
-            if(alunos.estacheio())
-                cout << "A arvore esta cheia!\n";
-            else
-                alunos.inserir(verbete);
-
-            alunos.imprimiremordem(alunos.obterRaiz());
-        } while(!feof(entrada));
-
-        fclose(entrada);
-
-    } catch (const char *e){
-        cout << "ERRO" << e << endl;
+    FILE *entrada = fopen("entrada.txt","r");
+    if(entrada==NULL){
+        throw "Erro na abertura do arquivo de entrada";
     }
 
-    desativaMemLog();
+    ofstream saida;
+    saida.open("saida.txt",ios::app);
+    if(!saida){
+        throw "Não foi possivel abrir o arquivo de saida";
+    }
+
+    if(implementacao=="avl"){
+        Dicionario_AVL alunos;
+        char palavra[30], significado[100];
+        char tipo;
+        No *raiz = NULL;
+
+        try{
+
+            do{
+                fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
+                string palavra_conv(palavra);
+                string significado_conv(significado);
+                palavra_conv.erase(0,1);
+                significado_conv.erase(0,2);
+                Verbete verbete(tipo, palavra_conv, significado_conv);
+                raiz = alunos.inserir(raiz,verbete);
+            } while(!feof(entrada));
+
+            alunos.Imprimir_Dicionario(raiz,&saida);
+
+            fclose(entrada);
+
+        } catch (const char *e){
+            cout << "ERRO" << e << endl;
+        }
+    }
+    else{
+        Dicionario_Hash dicionario_hash;
+        char palavra[30], significado[100];
+        char tipo;
+
+        try{
+            do{
+                fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
+                string palavra_conv(palavra);
+                string significado_conv(significado);
+                palavra_conv.erase(0,1);
+                significado_conv.erase(0,2);
+                Verbete verbete(tipo, palavra_conv, significado_conv);
+                dicionario_hash.Inserir(verbete);
+            } while(!feof(entrada));
+
+            dicionario_hash.Imprimir();
+
+        } catch (const char *e){
+            cout << "ERRO" << e << endl;
+        }
+    }
+
+    fclose(entrada);
+
+    //desativaMemLog();
 }

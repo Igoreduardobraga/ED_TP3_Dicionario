@@ -1,305 +1,250 @@
-#include <iostream>
-#include <cstddef>
+#include "Dicionario_AVL.hpp"
+#include <bits/stdc++.h>
 #include <fstream>
-#include "Dicionario_AVL.hpp" //modificado
-
 using namespace std;
 
-Dicionario_AVL::Dicionario_AVL() // construtor  //mudounome
+int Dicionario_AVL::altura(No *N)
 {
-    raiz = NULL;
+	if (N == NULL)
+		return 0;
+	return N->altura;
 }
 
-Dicionario_AVL::~Dicionario_AVL() // destrutor //mudounome
+int Dicionario_AVL::max(int a, int b)
 {
-    deletarDicionario(raiz);
+	return (a > b)? a : b;
 }
 
-void Dicionario_AVL::deletarDicionario(No* Noatual)
+/* Helper function that allocates a
+new node with the given verbete.get_Verbete() and
+NULL esquerda and direita pointers. */
+No* Dicionario_AVL::NovoNo(string verbete)
 {
-    if (Noatual != NULL){
-        deletarDicionario(Noatual->esquerda);
+	No* node = new No();
+	node->verbete.set_Verbete(verbete);
+	node->esquerda = NULL;
+	node->direita = NULL;
+	node->altura = 1; // new node is initially
+					// added at leaf
+	return(node);
+}
 
-        deletarDicionario(Noatual->direita);
+No *Dicionario_AVL::Rotacao_Direita(No *y)
+{
+	No *x = y->esquerda;
+	No *T2 = x->direita;
 
-        delete Noatual;
+	// Perform rotation
+	x->direita = y;
+	y->esquerda = T2;
+
+	// Update heights
+	y->altura = max(altura(y->esquerda),
+					altura(y->direita)) + 1;
+	x->altura = max(altura(x->esquerda),
+					altura(x->direita)) + 1;
+
+	// Return new raiz
+	return x;
+}
+
+No *Dicionario_AVL::Rotacao_Esquerda(No *x)
+{
+	No *y = x->direita;
+	No *T2 = y->esquerda;
+
+	// Perform rotation
+	y->esquerda = x;
+	x->direita = T2;
+
+	// Update heights
+	x->altura = max(altura(x->esquerda),
+					altura(x->direita)) + 1;
+	y->altura = max(altura(y->esquerda),
+					altura(y->direita)) + 1;
+
+	// Return new raiz
+	return y;
+}
+
+int Dicionario_AVL::get_balanceamento(No *N)
+{
+	if (N == NULL)
+		return 0;
+	return altura(N->esquerda) - altura(N->direita);
+}
+
+No* Dicionario_AVL::inserir(No* node, Verbete verbete)
+{
+	if (node == NULL)
+		return(NovoNo(verbete.get_Verbete()));
+
+    if(verbete.get_Verbete() == node->verbete.get_Verbete()){
+        node->verbete.inserir_significado(verbete.get_Significado());
     }
-}
-
-No* Dicionario_AVL::obterRaiz()
-{
-    return raiz;
-}
-
-bool Dicionario_AVL::estavazio()
-{
-    return (raiz == NULL);
-}
-
-bool Dicionario_AVL::estacheio()
-{
-    try{
-        No* temp = new No;
-        delete temp;
-        return false;
-    } catch(bad_alloc &exception){
-        return true;
+	else if (verbete.get_Verbete() < node->verbete.get_Verbete())
+		node->esquerda = inserir(node->esquerda, verbete.get_Verbete());
+	else if (verbete.get_Verbete() > node->verbete.get_Verbete())
+		node->direita = inserir(node->direita, verbete.get_Verbete());
+    else{
+        return node;
     }
+    
+	node->altura = 1 + max(altura(node->esquerda), altura(node->direita));
+
+	int balance = get_balanceamento(node);
+
+	if (balance > 1 && verbete.get_Verbete() < node->esquerda->verbete.get_Verbete())
+		return Rotacao_Direita(node);
+
+	
+	if (balance < -1 && verbete.get_Verbete() > node->direita->verbete.get_Verbete())
+		return Rotacao_Esquerda(node);
+
+	if (balance > 1 && verbete.get_Verbete() > node->esquerda->verbete.get_Verbete())
+	{
+		node->esquerda = Rotacao_Esquerda(node->esquerda);
+		return Rotacao_Direita(node);
+	}
+
+	if (balance < -1 && verbete.get_Verbete() < node->direita->verbete.get_Verbete())
+	{
+		node->direita = Rotacao_Direita(node->direita);
+		return Rotacao_Esquerda(node);
+	}
+
+	return node;
 }
 
-void Dicionario_AVL::inserir(Verbete verbete) //modificada
+
+No * Dicionario_AVL::minValueNode(No* node)
 {
-    bool cresceu;
-    if(!inseriu_primeiro){
-        insererecursivo(raiz,verbete,cresceu);
-        inseriu_primeiro = true;
+	No* current = node;
+
+	while (current->esquerda != NULL)
+		current = current->esquerda;
+
+	return current;
+}
+
+No* Dicionario_AVL::DeletarNo(No* raiz, Verbete verbete)
+{
+	
+	if (raiz == NULL)
+		return raiz;
+
+	if ( verbete.get_Verbete() < raiz->verbete.get_Verbete() )
+		raiz->esquerda = DeletarNo(raiz->esquerda, verbete);
+
+	else if( verbete.get_Verbete() > raiz->verbete.get_Verbete() )
+		raiz->direita = DeletarNo(raiz->direita, verbete.get_Verbete());
+
+	else
+	{
+		// node with only one child or no child
+		if( (raiz->esquerda == NULL) ||
+			(raiz->direita == NULL) )
+		{
+			No *temp = raiz->esquerda ?
+						raiz->esquerda :
+						raiz->direita;
+
+			// No child case
+			if (temp == NULL)
+			{
+				temp = raiz;
+				raiz = NULL;
+			}
+			else // One child case
+			*raiz = *temp; // Copy the contents of
+						// the non-empty child
+			free(temp);
+		}
+		else
+		{
+			// node with two children: Get the inorder
+			// successor (smallest in the direita subtree)
+			No* temp = minValueNode(raiz->direita);
+
+			// Copy the inorder successor's
+			// data to this node
+			raiz->verbete.get_Verbete() = temp->verbete.get_Verbete();
+
+			// Delete the inorder successor
+			raiz->direita = DeletarNo(raiz->direita,
+									temp->verbete.get_Verbete());
+		}
+	}
+
+	// If the tree had only one node
+	// then return
+	if (raiz == NULL)
+	return raiz;
+
+	// STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+	raiz->altura = 1 + max(altura(raiz->esquerda),
+						altura(raiz->direita));
+
+	// STEP 3: GET THE BALANCE FACTOR OF
+	// THIS NODE (to check whether this
+	// node became unbalanced)
+	int balance = get_balanceamento(raiz);
+
+	// If this node becomes unbalanced,
+	// then there are 4 cases
+
+	// Left Left Case
+	if (balance > 1 &&
+		get_balanceamento(raiz->esquerda) >= 0)
+		return Rotacao_Direita(raiz);
+
+	// Left Right Case
+	if (balance > 1 &&
+		get_balanceamento(raiz->esquerda) < 0)
+	{
+		raiz->esquerda = Rotacao_Esquerda(raiz->esquerda);
+		return Rotacao_Direita(raiz);
+	}
+
+	// Right Right Case
+	if (balance < -1 &&
+		get_balanceamento(raiz->direita) <= 0)
+		return Rotacao_Esquerda(raiz);
+
+	// Right Left Case
+	if (balance < -1 &&
+		get_balanceamento(raiz->direita) > 0)
+	{
+		raiz->direita = Rotacao_Direita(raiz->direita);
+		return Rotacao_Esquerda(raiz);
+	}
+
+	return raiz;
+}
+
+// A utility function to print preorder
+// traversal of the tree.
+// The function also prints altura
+// of every node
+void Dicionario_AVL::Imprimir_Dicionario(No *noatual, ofstream *saida)
+{
+	if(noatual != NULL)
+	{
+		Imprimir_Dicionario(noatual->esquerda, saida);
+        *saida << noatual->verbete.get_Verbete() << endl;
+        noatual->verbete.imprimir_significados();
+		Imprimir_Dicionario(noatual->direita,saida);
+	}
+}
+
+No* Dicionario_AVL::PesquisaRecursivo(No *no, string chave) {
+    if (no == NULL) {
+        //return ;
     }
+    if (chave < no->verbete.get_Verbete())
+        return PesquisaRecursivo(no->esquerda, chave);
+    else if (chave > no->verbete.get_Verbete())
+        return PesquisaRecursivo(no->direita, chave);
     else
-        buscar(verbete,cresceu);
+        return no;
 }
-
-void Dicionario_AVL::insererecursivo(No*& noatual, Verbete verbete, bool& cresceu)
-{ // novo
-    if (noatual == NULL) {
-        noatual = new No;
-        noatual->direita = NULL;
-        noatual->esquerda = NULL;
-        noatual->verbete = verbete;
-        noatual->fator_balanceamento = 0;
-        cresceu = true;
-        return;
-    }  
-    if (verbete.get_Verbete() < noatual->verbete.get_Verbete()) {
-        insererecursivo(noatual->esquerda, verbete, cresceu);
-        if (cresceu){
-            noatual->fator_balanceamento-=1;   
-        } 
-    } else {
-        insererecursivo(noatual->direita, verbete, cresceu);
-        if (cresceu){
-            noatual->fator_balanceamento+=1;
-        }    
-    } 
-    realizarotacao(noatual);
-
-    if (cresceu && noatual->fator_balanceamento == 0){
-        cresceu = false;
-    }
-}
-
-void Dicionario_AVL::remover(Verbete verbete) //modificada
-{
-    bool diminuiu;
-    removerbusca(verbete, raiz, diminuiu);
-}
-
-void Dicionario_AVL::removerbusca(Verbete verbete, No*& noatual, bool& diminuiu)
-{ //modificada
-    if (verbete.get_Verbete() < noatual->verbete.get_Verbete()){
-        removerbusca(verbete, noatual->esquerda, diminuiu);
-        if (diminuiu){
-            noatual->fator_balanceamento+=1;
-        }
-    } else if (verbete.get_Verbete() > noatual->verbete.get_Verbete()){
-        removerbusca(verbete, noatual->direita, diminuiu);
-        if (diminuiu){
-            noatual->fator_balanceamento-=1;
-        }
-    } else{
-        deletarNo(noatual, diminuiu);
-    }
-    if (noatual != NULL){
-        realizarotacao(noatual);
-        if (diminuiu && noatual->fator_balanceamento != 0){
-            diminuiu = false;
-        }
-    }
-}
-
-void Dicionario_AVL::deletarNo(No*& noatual, bool& diminuiu)
-{
-    No* temp = noatual;
-    if (noatual->esquerda == NULL){
-        noatual = noatual->direita;
-        diminuiu = true;
-        delete temp;
-    } else if (noatual->direita == NULL){
-        noatual = noatual->esquerda;
-        diminuiu = true;
-        delete temp;
-    } else{
-        Verbete AlunoSucessor;
-        obterSucessor(AlunoSucessor, noatual);
-        noatual->verbete = AlunoSucessor;
-        removerbusca(AlunoSucessor, noatual->direita, diminuiu);
-        if (diminuiu){
-            noatual->fator_balanceamento-=1;
-        }
-    }
-}
-
-void Dicionario_AVL::obterSucessor(Verbete& AlunoSucessor, No* temp)
-{
-    temp = temp->direita;
-    while (temp->esquerda != NULL){
-        temp = temp->esquerda;
-    }
-    AlunoSucessor = temp->verbete;
-}
-
-void Dicionario_AVL::buscar(Verbete& verbete, bool &cresceu)
-{
-    bool encontrou = false;
-    No* noatual = raiz;
-    while (noatual != NULL){
-        if (verbete.get_Verbete() < noatual->verbete.get_Verbete()){
-            noatual = noatual->esquerda;
-        } else if (verbete.get_Verbete() > noatual->verbete.get_Verbete()){
-            noatual = noatual->direita;
-        } else if(verbete.get_Verbete() == noatual->verbete.get_Verbete()){
-            encontrou = true;
-            noatual->verbete.inserir_significado(verbete.get_Significado());
-            break;
-        }
-    }
-    if(!encontrou){
-        insererecursivo(raiz, verbete, cresceu);
-    }
-
-}
-
-void Dicionario_AVL::imprimirpreordem(No* Noatual)
-{
-    if (Noatual != NULL){
-        cout << Noatual->verbete.get_Verbete() << endl;
-
-        imprimirpreordem(Noatual->esquerda);
-
-        imprimirpreordem(Noatual->direita);
-    }
-}
-
-void Dicionario_AVL::imprimiremordem(No* Noatual)
-{
-    ofstream saida;
-    saida.open("saida.txt", ios::out);
-    if(!saida.is_open()){
-        throw "Nao foi possivel abrir o arquivo de saida";
-    }
-    if (Noatual != NULL){
-        imprimiremordem(Noatual->esquerda);
-
-        saida << Noatual->verbete.get_Verbete() << endl;
-        Noatual->verbete.imprimir_significado(&saida);
-
-        imprimiremordem(Noatual->direita);            
-    }
-}
-
-void Dicionario_AVL::imprimirposordem(No* Noatual)
-{
-    if (Noatual != NULL){
-        imprimirposordem(Noatual->esquerda);
-
-        imprimirposordem(Noatual->direita);
-
-        cout << Noatual->verbete.get_Verbete() << endl;            
-    }
-}
-
-void Dicionario_AVL::rotacaodireita(No*& pai) //novo
-{
-    No* novopai = pai->esquerda;
-    pai->esquerda = novopai->direita;
-    novopai->direita = pai;
-    pai = novopai;
-}
-
-void Dicionario_AVL::rotacaoesquerda(No*& pai) //novo
-{
-    No* novopai = pai->direita;
-    pai->direita = novopai->esquerda;
-    novopai->esquerda = pai;
-    pai = novopai;
-}
-
-void Dicionario_AVL::rotacaoesquerdadireita(No*& pai)
-{
-    No* filho = pai->esquerda;
-    rotacaoesquerda(filho);
-    pai->esquerda = filho;
-    rotacaodireita(pai);
-}
-
-
-void Dicionario_AVL::rotacaodireitaesquerda(No*& pai)
-{
-    No* filho = pai->direita;
-    rotacaodireita(filho);
-    pai->direita = filho;
-    rotacaoesquerda(pai);
-}
-
-
-void Dicionario_AVL::realizarotacao(No*& pai)
-{
-    No* filho;
-    No* neto; // Caso precise da rotação dupla
-
-    if (pai->fator_balanceamento == -2){ //rotaciona para a direita
-
-    filho = pai->esquerda;
-
-    if (filho->fator_balanceamento == -1){ // Simples para a direita
-        pai->fator_balanceamento = 0;
-        filho->fator_balanceamento = 0;
-        rotacaodireita(pai);
-    } else if (filho->fator_balanceamento == 0){ // Simples para a direita
-        pai->fator_balanceamento = -1;
-        filho->fator_balanceamento = 1;
-        rotacaodireita(pai);
-    } else if (filho->fator_balanceamento == 1){ // Rotação dupla
-        neto = filho->direita;
-        if (neto->fator_balanceamento == -1){
-            pai->fator_balanceamento = 1;
-            filho->fator_balanceamento = 0;
-        } else if (neto->fator_balanceamento == 0){
-            pai->fator_balanceamento = 0;
-            filho->fator_balanceamento = 0;                
-        } else if (neto->fator_balanceamento == 1){
-            pai->fator_balanceamento = 0;
-            filho->fator_balanceamento = -1;                
-        }
-        neto->fator_balanceamento = 0; 
-        rotacaodireitaesquerda(pai);            
-    }
-
-
-
-    } else if(pai->fator_balanceamento == 2){ //rotaciona para a esquerda
-        filho = pai->direita;
-        if (filho->fator_balanceamento == 1) { // Simples para a esquerda
-            pai->fator_balanceamento = 0;
-            filho->fator_balanceamento = 0;
-            rotacaoesquerda(pai);
-        } else if (filho->fator_balanceamento == 0){ // Simples para a esquerda         
-            pai->fator_balanceamento = 1;
-            filho->fator_balanceamento = -1;
-            rotacaoesquerda(pai);
-        } else if (filho->fator_balanceamento == -1){ // Rotacao dupla
-            neto = filho->esquerda;
-            if (neto->fator_balanceamento == -1){
-                pai->fator_balanceamento =  0;
-                filho->fator_balanceamento = 1; 
-            } else if (neto->fator_balanceamento == 0){
-                pai->fator_balanceamento =  0;
-                filho->fator_balanceamento = 0; 
-            } else if (neto->fator_balanceamento == 1){
-                pai->fator_balanceamento =  -1;
-                filho->fator_balanceamento = 0; 
-            }
-            neto->fator_balanceamento = 0;
-            rotacaodireitaesquerda(pai);
-        }
-    }
-}                  

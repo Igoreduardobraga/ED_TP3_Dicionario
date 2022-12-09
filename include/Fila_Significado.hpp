@@ -1,6 +1,9 @@
 #ifndef FILA_SIGNIFICADO_H
 #define FILA_SIGNIFICADO_H
 #include <iostream>
+#include <fstream>
+#include <cstddef>
+#include <new>
 using namespace std;
 
 typedef string TipoItem;
@@ -23,7 +26,7 @@ class Fila_Significado{
         bool estacheio(); 
         void inserir(TipoItem significado); 
         void remover();
-        void imprimir(ofstream **saida);
+        void imprimir();
 };
 
 #endif

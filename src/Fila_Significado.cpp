@@ -1,8 +1,4 @@
 #include "Fila_Significado.hpp"
-#include <cstddef>
-#include <fstream>
-#include <new>
-using namespace std;
 
 Fila_Significado::Fila_Significado() // Constructor
 {
@@ -71,7 +67,7 @@ void Fila_Significado::remover() //dequeue //pop
     }
 }
 
-void Fila_Significado::imprimir(ofstream **saida) //print
+void Fila_Significado::imprimir() //print
 {
     No_Fila* temp = primeiro;
     if(estavazio()){

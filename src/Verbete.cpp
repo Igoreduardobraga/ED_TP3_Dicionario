@@ -7,12 +7,18 @@ Verbete::Verbete(char tipo, string verbete, string significado){
     inserir_significado(significado);
 }
 
+Verbete::Verbete(){
+    this->verbete = "vazio";
+    this->significado = " ";
+    this->tipo = ' ';
+}
+
 Verbete::Verbete(string verbete){
     this->verbete = verbete;
 }
 
-void Verbete::imprimir_significado(ofstream *saida){
-    this->fila_significado.imprimir(&saida);
+void Verbete::imprimir_significados(){
+    this->fila_significado.imprimir();
 }
 
 void Verbete::inserir_significado(string significado){
@@ -25,4 +31,8 @@ string Verbete::get_Verbete(){
 
 string Verbete::get_Significado(){
     return this->significado;
+}
+
+void Verbete::set_Verbete(string verbete){
+    this->verbete = verbete;
 }
