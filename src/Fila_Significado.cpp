@@ -37,6 +37,7 @@ bool Fila_Significado::estacheio() //isFull
 
 void Fila_Significado::inserir(TipoItem significado) //enqueue //push
 {
+    if(significado!=""){
     if (estacheio()){
         cout << "A Fila esta cheia!\n";
         cout << "Nao foi possivel inserir este elemento!\n";
@@ -51,6 +52,7 @@ void Fila_Significado::inserir(TipoItem significado) //enqueue //push
         }
         ultimo = NoNovo;
         tamanho++;
+    }
     }
 }
 
@@ -80,14 +82,10 @@ void Fila_Significado::imprimir() //print
     unsigned short int cont = 1;
 
     while (temp != NULL){
-        if(temp->significado=="")
-            temp = temp->proximo;
-        else{
         saida << cont << ". ";
         saida << temp->significado << endl;
         temp = temp->proximo;
         cont++;
-        }
     }
 }
 

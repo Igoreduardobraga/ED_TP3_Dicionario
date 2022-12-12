@@ -132,73 +132,65 @@ No * Dicionario_AVL::minValueNode(No* node)
 	return current;
 }
 
-// No* Dicionario_AVL::Remover_Verbetes(No* raiz)
-// {
-// 	if(raiz!=NULL){
-// 	if(raiz->verbete.get_TamanhoFilaSignificados() >= 1){
+No* Dicionario_AVL::Remover_Verbetes(No* raiz)
+{
+	if(raiz!=NULL){
+		if(raiz->verbete.get_TamanhoFilaSignificados() >= 1){
+			Remover_Verbetes(raiz->direita);
 
-// 	if ( verbete.get_Verbete() < raiz->verbete.get_Verbete() )
-// 		raiz->esquerda = Remover_Verbetes(raiz->esquerda, verbete);
+			Remover_Verbetes(raiz->esquerda);
+		}
+		if( (raiz->esquerda == NULL) || (raiz->direita == NULL) )
+		{
+			No *temp = raiz->esquerda ? raiz->esquerda : raiz->direita;
 
-// 	else if( verbete.get_Verbete() > raiz->verbete.get_Verbete() )
-// 		raiz->direita = Remover_Verbetes(raiz->direita, verbete);
+			if (temp == NULL)
+			{
+				temp = raiz;
+				raiz = NULL;
+			}
+			else
+			*raiz = *temp;
 
-// 	else
-// 	{
-// 		if( (raiz->esquerda == NULL) ||
-// 			(raiz->direita == NULL) )
-// 		{
-// 			No *temp = raiz->esquerda ? raiz->esquerda : raiz->direita;
+			//free(temp);
+		}
+		else
+		{
+			No* temp = minValueNode(raiz->direita);
 
-// 			if (temp == NULL)
-// 			{
-// 				temp = raiz;
-// 				raiz = NULL;
-// 			}
-// 			else
-// 			*raiz = *temp;
+			raiz->verbete = temp->verbete;
 
-// 			free(temp);
-// 		}
-// 		else
-// 		{
-// 			No* temp = minValueNode(raiz->direita);
+			raiz->direita = Remover_Verbetes(raiz->direita);
+		}
+	}
 
-// 			raiz->verbete = temp->verbete;
+	if (raiz == NULL)
+	return raiz;
 
-// 			raiz->direita = Remover_Verbetes(raiz->direita, temp->verbete);
-// 		}
-// 	}
+	raiz->altura = 1 + max(altura(raiz->esquerda), altura(raiz->direita));
 
-// 	if (raiz == NULL)
-// 	return raiz;
+	int balance = get_balanceamento(raiz);
 
-// 	raiz->altura = 1 + max(altura(raiz->esquerda), altura(raiz->direita));
+	if (balance > 1 && get_balanceamento(raiz->esquerda) >= 0)
+		return Rotacao_Direita(raiz);
 
-// 	int balance = get_balanceamento(raiz);
+	if (balance > 1 && get_balanceamento(raiz->esquerda) < 0)
+	{
+		raiz->esquerda = Rotacao_Esquerda(raiz->esquerda);
+		return Rotacao_Direita(raiz);
+	}
 
-// 	if (balance > 1 && get_balanceamento(raiz->esquerda) >= 0)
-// 		return Rotacao_Direita(raiz);
+	if (balance < -1 && get_balanceamento(raiz->direita) <= 0)
+		return Rotacao_Esquerda(raiz);
 
-// 	if (balance > 1 && get_balanceamento(raiz->esquerda) < 0)
-// 	{
-// 		raiz->esquerda = Rotacao_Esquerda(raiz->esquerda);
-// 		return Rotacao_Direita(raiz);
-// 	}
-
-// 	if (balance < -1 && get_balanceamento(raiz->direita) <= 0)
-// 		return Rotacao_Esquerda(raiz);
-
-// 	if (balance < -1 && get_balanceamento(raiz->direita) > 0)
-// 	{
-// 		raiz->direita = Rotacao_Direita(raiz->direita);
-// 		return Rotacao_Esquerda(raiz);
-// 	}
-// 	}
-// 	else
-// 		return raiz;
-// 	}
-// }
+	if (balance < -1 && get_balanceamento(raiz->direita) > 0)
+	{
+		raiz->direita = Rotacao_Direita(raiz->direita);
+		return Rotacao_Esquerda(raiz);
+	}
+	else
+		return raiz;
+}
 
 void Dicionario_AVL::Imprimir_Dicionario(No *noatual, ofstream *saida)
 {
