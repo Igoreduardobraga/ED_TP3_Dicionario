@@ -2,17 +2,17 @@
 
 int Dicionario_Hash::FuncaoHash(Verbete verbete){
     string palavra = verbete.get_Verbete();
-    int tam = (verbete.get_Verbete()).length();
+    int tam = (palavra).length();
     unsigned int hash = 0;
     for(int i = 0; i<tam ; i++){
         hash += palavra[i]*(i+1);
     }
-    return (hash % MAX_POSICOES);
+    return (hash % max_posicoes);
 }
 
 Dicionario_Hash::Dicionario_Hash(){
     quantidade_itens = 0;
-    estrutura = new Verbete[MAX_POSICOES];
+    estrutura = new Verbete[max_posicoes];
 }
 
 Dicionario_Hash::~Dicionario_Hash(){
@@ -20,7 +20,7 @@ Dicionario_Hash::~Dicionario_Hash(){
 }
 
 bool Dicionario_Hash::estacheio(){
-    return (quantidade_itens == MAX_ITENS);
+    return (quantidade_itens == max_itens);
 }
 
 int Dicionario_Hash::get_TamanhoAtual(){
@@ -28,12 +28,19 @@ int Dicionario_Hash::get_TamanhoAtual(){
 }
 
 void Dicionario_Hash::Inserir(Verbete verbete){
-    int local = FuncaoHash(verbete);
-    while(estrutura[local].get_Verbete() != "vazio"){
-        local = (local+1) % MAX_POSICOES;
+    Verbete aux;
+    aux = Buscar(verbete);
+    if(aux.get_Verbete() != "vazio" && aux.get_Verbete() != "removido"){
+        aux.inserir_significado(verbete.get_Significado());
     }
-    estrutura[local] = verbete;
-    quantidade_itens++;
+    else{
+        int local = FuncaoHash(verbete);
+        while(estrutura[local].get_Verbete() != "vazio" && estrutura[local].get_Verbete() != "removido"){
+            local = (local+1) % max_posicoes;
+        }
+        estrutura[local] = verbete;
+        quantidade_itens++;
+    }
 }
 
 void Dicionario_Hash::Deletar(Verbete verbete){
@@ -46,28 +53,31 @@ void Dicionario_Hash::Deletar(Verbete verbete){
             quantidade_itens--;
             break;
         }
-        local = (local+1) % MAX_POSICOES;
+        local = (local+1) % max_posicoes;
     }
     if(!teste){
         cout << "Elemento nao encontrado" << endl;
     }
 }
-void Dicionario_Hash::Buscar(Verbete& verbete, bool &achou){
+Verbete Dicionario_Hash::Buscar(Verbete& verbete){
+    Verbete temp;
     int local = FuncaoHash(verbete);
     Verbete aux = estrutura[local];
     while(estrutura[local].get_Verbete() != "vazio"){
         if(estrutura[local].get_Verbete() == verbete.get_Verbete()){
-            achou = true;
-            verbete = estrutura[local];
+            temp = estrutura[local];
             break;
         }
-        local = (local+1) % MAX_POSICOES;
+        local = (local+1) % max_posicoes;
     }
-    
+    return temp;
 }
+
 void Dicionario_Hash::Imprimir(){
-    for(int i=0 ; i<MAX_POSICOES ; i++){
-        cout << i << ":" << estrutura[i].get_Verbete() << " ";
-        estrutura[i].imprimir_significados();
+    for(int i=0 ; i<max_posicoes ; i++){
+        if(estrutura[i].get_Verbete() != "vazio" && estrutura[i].get_Verbete() != "removido"){
+            cout << estrutura[i].get_Verbete() << " (" << estrutura[i].get_Tipo() << ")" << endl;
+            estrutura[i].imprimir_significados();
+        }
     }
 }

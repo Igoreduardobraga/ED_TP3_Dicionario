@@ -57,16 +57,6 @@ void AnalisaComando(int argc, char ** argv){
     erroAssert(strlen(lognome)>0, "main - nome de arquivo de registro de acesso tem que ser definido");
 }
 
-string convertToString(char* a, int size)
-{
-    int i;
-    string s = "";
-    for (i = 0; i < size; i++) {
-        s = s + a[i];
-    }
-    return s;
-}
-
 int main(int argc, char *argv[]){
 
     //AnalisaComando(argc,argv);
@@ -82,7 +72,9 @@ int main(int argc, char *argv[]){
     //     desativaMemLog();
     // }
 
-    implementacao = "hash";
+    implementacao = "avl";
+
+    try{
 
     FILE *entrada = fopen("entrada.txt","r");
     if(entrada==NULL){
@@ -95,56 +87,57 @@ int main(int argc, char *argv[]){
         throw "Não foi possivel abrir o arquivo de saida";
     }
 
+    // Implementação utilizando árvore AVL
     if(implementacao=="avl"){
-        Dicionario_AVL alunos;
+        Dicionario_AVL dicionario_avl;
         char palavra[30], significado[100];
         char tipo;
         No *raiz = NULL;
 
-        try{
+        do{
+            fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
+            string palavra_conv(palavra);
+            string significado_conv(significado);
+            palavra_conv.erase(0,1);
+            significado_conv.erase(0,2);
+            Verbete verbete(tipo, palavra_conv, significado_conv);
+            raiz = dicionario_avl.inserir(raiz,verbete);
+        } while(!feof(entrada));
 
-            do{
-                fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
-                string palavra_conv(palavra);
-                string significado_conv(significado);
-                palavra_conv.erase(0,1);
-                significado_conv.erase(0,2);
-                Verbete verbete(tipo, palavra_conv, significado_conv);
-                raiz = alunos.inserir(raiz,verbete);
-            } while(!feof(entrada));
+        dicionario_avl.Imprimir_Dicionario(raiz,&saida);
 
-            alunos.Imprimir_Dicionario(raiz,&saida);
+        //Remove os verbetes que têm pelo menos um significado
+        //raiz = dicionario_avl.Remover_Verbetes(raiz);
 
-            fclose(entrada);
-
-        } catch (const char *e){
-            cout << "ERRO" << e << endl;
-        }
+        //dicionario_avl.Destruir_Dicionario(raiz);
     }
+    // Implementação utilizando tabela hash
     else{
         Dicionario_Hash dicionario_hash;
         char palavra[30], significado[100];
         char tipo;
 
-        try{
-            do{
-                fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
-                string palavra_conv(palavra);
-                string significado_conv(significado);
-                palavra_conv.erase(0,1);
-                significado_conv.erase(0,2);
-                Verbete verbete(tipo, palavra_conv, significado_conv);
-                dicionario_hash.Inserir(verbete);
-            } while(!feof(entrada));
+        do{
+            fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
+            string palavra_conv(palavra);
+            string significado_conv(significado);
+            palavra_conv.erase(0,1);
+            significado_conv.erase(0,2);
+            Verbete verbete(tipo, palavra_conv, significado_conv);
+            dicionario_hash.Inserir(verbete);
+        } while(!feof(entrada));
 
-            dicionario_hash.Imprimir();
+        dicionario_hash.Imprimir();
 
-        } catch (const char *e){
-            cout << "ERRO" << e << endl;
-        }
     }
 
     fclose(entrada);
+
+    } catch (const char *e){
+            cout << "ERRO" << e << endl;
+    }
+
+    
 
     //desativaMemLog();
 }

@@ -33,6 +33,10 @@ string Verbete::get_Significado(){
     return this->significado;
 }
 
-void Verbete::set_Verbete(string verbete){
-    this->verbete = verbete;
+char Verbete::get_Tipo(){
+    return this->tipo;
+}
+
+int Verbete::get_TamanhoFilaSignificados(){
+    return fila_significado.get_tamanho();
 }

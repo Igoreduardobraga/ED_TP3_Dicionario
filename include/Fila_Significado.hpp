@@ -18,6 +18,7 @@ class Fila_Significado{
     private:
         No_Fila* primeiro;
         No_Fila* ultimo;
+        unsigned short int tamanho;
 
     public:
         Fila_Significado();
@@ -27,6 +28,7 @@ class Fila_Significado{
         void inserir(TipoItem significado); 
         void remover();
         void imprimir();
+        int get_tamanho();
 };
 
 #endif

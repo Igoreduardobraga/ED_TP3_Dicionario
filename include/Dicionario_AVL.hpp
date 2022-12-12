@@ -16,18 +16,18 @@ struct No{
 
 class Dicionario_AVL{
     private:
-        bool inseriu_primeiro = false;
 
     public:
+        void Destruir_Dicionario(No* Noatual);
         int altura(No *N);
         int max(int a, int b);
-        No* NovoNo(string verbete);
+        No* NovoNo(Verbete verbete);
         No *Rotacao_Direita(No *y);
         No *Rotacao_Esquerda(No *x);
         int get_balanceamento(No *N);
         No* inserir(No* no, Verbete verbete);
         No * minValueNode(No* no);
-        No* DeletarNo(No* root, Verbete verbete);
+        No* Remover_Verbetes(No* root);
         No* PesquisaRecursivo(No *no, string chave);
         void Imprimir_Dicionario(No *raiz, ofstream *saida);
 };

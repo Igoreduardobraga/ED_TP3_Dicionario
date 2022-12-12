@@ -4,6 +4,7 @@ Fila_Significado::Fila_Significado() // Constructor
 {
     primeiro = NULL;
     ultimo = NULL;
+    tamanho = 0;
 }
 
 Fila_Significado::~Fila_Significado() // Destrutor
@@ -49,6 +50,7 @@ void Fila_Significado::inserir(TipoItem significado) //enqueue //push
             ultimo->proximo = NoNovo;
         }
         ultimo = NoNovo;
+        tamanho++;
     }
 }
 
@@ -69,14 +71,26 @@ void Fila_Significado::remover() //dequeue //pop
 
 void Fila_Significado::imprimir() //print
 {
+    ofstream saida;
+    saida.open("saida.txt",ios::app);
+    if(!saida){
+        throw "Não foi possivel abrir o arquivo de saida";
+    }
     No_Fila* temp = primeiro;
-    if(estavazio()){
-        cout << " ";
-    }
-    cout << "Fila= [ ";
+    unsigned short int cont = 1;
+
     while (temp != NULL){
-        cout << temp->significado << " ";
+        if(temp->significado=="")
+            temp = temp->proximo;
+        else{
+        saida << cont << ". ";
+        saida << temp->significado << endl;
         temp = temp->proximo;
+        cont++;
+        }
     }
-    cout << "]\n";
+}
+
+int Fila_Significado::get_tamanho(){
+    return tamanho;
 }

@@ -6,14 +6,14 @@
 
 using namespace std;
 
-//Quantos elementos, no maximo, vao ser adicionados
-#define MAX_ITENS 4997
-
-#define MAX_POSICOES 1000
-
 class Dicionario_Hash{
     private:
         int FuncaoHash(Verbete verbete);
+        
+        //Quantos elementos, no maximo, vao ser adicionados
+        static const int max_itens = 3997;
+
+        static const int max_posicoes = 3995;
 
         //quantos itens foram adicionados no vetor
         int quantidade_itens;
@@ -28,7 +28,7 @@ class Dicionario_Hash{
         int get_TamanhoAtual();
         void Inserir(Verbete verbete);
         void Deletar(Verbete verbete);
-        void Buscar(Verbete& verbete, bool &achou);
+        Verbete Buscar(Verbete& verbete);
         void Imprimir();
 };
 
