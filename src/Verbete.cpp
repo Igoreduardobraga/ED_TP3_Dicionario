@@ -17,8 +17,8 @@ Verbete::Verbete(string verbete){
     this->verbete = verbete;
 }
 
-void Verbete::imprimir_significados(){
-    this->fila_significado.imprimir();
+void Verbete::imprimir_significados(ofstream* saida){
+    this->fila_significado.imprimir(saida);
 }
 
 void Verbete::inserir_significado(string significado){

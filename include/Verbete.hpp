@@ -18,7 +18,7 @@ class Verbete{
         Verbete(char tipo, string verbete, string significado);
         Verbete(string verbete);
         void inserir_significado(string significado);
-        void imprimir_significados();
+        void imprimir_significados(ofstream* saida);
         char get_Tipo();
         string get_Verbete();
         string get_Significado();

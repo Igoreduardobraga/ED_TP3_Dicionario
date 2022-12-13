@@ -3,31 +3,35 @@
 #include <fstream>
 using namespace std;
 
-void Dicionario_AVL::Destruir_Dicionario(No* Noatual)
-{
+void Dicionario_AVL::Destruir_Dicionario(No* Noatual){
+	//Descrição: Destrói o dicionario, desalocando cada nó
+
 	if (Noatual != NULL){
-		Destruir_Dicionario(Noatual->esquerda);
+            Destruir_Dicionario(Noatual->esquerda);
 
-		Destruir_Dicionario(Noatual->direita);
+            Destruir_Dicionario(Noatual->direita);
 
-		delete Noatual;
-	}
+            delete Noatual;
+        }
 }
 
-int Dicionario_AVL::altura(No *N)
-{
+int Dicionario_AVL::altura(No *N){
+	//Descrição: Obtem a altura da árvore
+
 	if (N == NULL)
 		return 0;
 	return N->altura;
 }
 
-int Dicionario_AVL::max(int a, int b)
-{
+int Dicionario_AVL::max(int a, int b){
+	//Descrição:
+
 	return (a > b)? a : b;
 }
 
-No* Dicionario_AVL::NovoNo(Verbete verbete)
-{
+No* Dicionario_AVL::NovoNo(Verbete verbete){
+	//Descrição: Cria um novo nó na árvore
+
 	No* node = new No();
 	node->verbete = verbete;
 	node->esquerda = NULL;
@@ -37,14 +41,16 @@ No* Dicionario_AVL::NovoNo(Verbete verbete)
 	return(node);
 }
 
-No *Dicionario_AVL::Rotacao_Direita(No *y)
-{
+No *Dicionario_AVL::Rotacao_Direita(No *y){
+	//Descrição: Faz a rotação para a direita na árvore
+
 	No *x = y->esquerda;
 	No *T2 = x->direita;
 
 	x->direita = y;
 	y->esquerda = T2;
 
+	// Atualiza as alturas da árvore
 	y->altura = max(altura(y->esquerda),
 					altura(y->direita)) + 1;
 	x->altura = max(altura(x->esquerda),
@@ -53,14 +59,16 @@ No *Dicionario_AVL::Rotacao_Direita(No *y)
 	return x;
 }
 
-No *Dicionario_AVL::Rotacao_Esquerda(No *x)
-{
+No *Dicionario_AVL::Rotacao_Esquerda(No *x){
+	//Descrição: Faz a rotação para a esquerda na árvore
+
 	No *y = x->direita;
 	No *T2 = y->esquerda;
 
 	y->esquerda = x;
 	x->direita = T2;
 
+	// Atualiza as alturas da árvore
 	x->altura = max(altura(x->esquerda),
 					altura(x->direita)) + 1;
 	y->altura = max(altura(y->esquerda),
@@ -69,15 +77,17 @@ No *Dicionario_AVL::Rotacao_Esquerda(No *x)
 	return y;
 }
 
-int Dicionario_AVL::get_balanceamento(No *N)
-{
+int Dicionario_AVL::get_balanceamento(No *N){
+	//Descrição: Obtém o balanceamnto de um nó da árvore
+
 	if (N == NULL)
 		return 0;
 	return altura(N->esquerda) - altura(N->direita);
 }
 
-No* Dicionario_AVL::inserir(No* node, Verbete verbete)
-{
+No* Dicionario_AVL::inserir(No* node, Verbete verbete){
+	//Descrição: Insere um novo item na árvore
+
 	if (node == NULL)
 		return(NovoNo(verbete));
 
@@ -122,8 +132,9 @@ No* Dicionario_AVL::inserir(No* node, Verbete verbete)
 }
 
 
-No * Dicionario_AVL::minValueNode(No* node)
-{
+No * Dicionario_AVL::minValueNode(No* node){
+	//Descrição: Retorna o nó com o menor valor, ou seja, o no mais à esquerda da árvore
+
 	No* current = node;
 
 	while (current->esquerda != NULL)
@@ -132,14 +143,10 @@ No * Dicionario_AVL::minValueNode(No* node)
 	return current;
 }
 
-No* Dicionario_AVL::Remover_Verbetes(No* raiz)
-{
-	if(raiz!=NULL){
-		if(raiz->verbete.get_TamanhoFilaSignificados() >= 1){
-			Remover_Verbetes(raiz->direita);
+No* Dicionario_AVL::Remover_Verbetes(No* raiz){
+	//Descrição: Remove os nós da arvore cujo verbete tem pelo menos um significado
 
-			Remover_Verbetes(raiz->esquerda);
-		}
+		
 		if( (raiz->esquerda == NULL) || (raiz->direita == NULL) )
 		{
 			No *temp = raiz->esquerda ? raiz->esquerda : raiz->direita;
@@ -162,10 +169,9 @@ No* Dicionario_AVL::Remover_Verbetes(No* raiz)
 
 			raiz->direita = Remover_Verbetes(raiz->direita);
 		}
-	}
 
 	if (raiz == NULL)
-	return raiz;
+		return raiz;
 
 	raiz->altura = 1 + max(altura(raiz->esquerda), altura(raiz->direita));
 
@@ -192,16 +198,34 @@ No* Dicionario_AVL::Remover_Verbetes(No* raiz)
 		return raiz;
 }
 
-void Dicionario_AVL::Imprimir_Dicionario(No *noatual, ofstream *saida)
-{
-	//Imprime o verbete, seu tipo e significado
+void Dicionario_AVL::Imprimir_Dicionario(No *noatual, ofstream *saida){
+	//Descrição: Imprime o verbete, seu tipo e significado
+
 	if(noatual != NULL)
 	{
 		Imprimir_Dicionario(noatual->esquerda, saida);
         *saida << noatual->verbete.get_Verbete() << " (" << noatual->verbete.get_Tipo() << ")" << endl;
-        noatual->verbete.imprimir_significados();
+        noatual->verbete.imprimir_significados(saida);
 
 		Imprimir_Dicionario(noatual->direita,saida);
+	}
+}
+
+void Dicionario_AVL::Imprimir_Retirar_Verbetes(No *noatual, ofstream *saida){
+	//Descrição: Imprime os verbetes que não possuem nenhum significado, juntamente com seu tipo
+
+	if(noatual != NULL)
+	{
+		if(noatual->verbete.get_TamanhoFilaSignificados() >= 1){
+			Imprimir_Retirar_Verbetes(noatual->esquerda, saida);
+
+			Imprimir_Retirar_Verbetes(noatual->direita,saida);
+		}
+		else{
+			Imprimir_Retirar_Verbetes(noatual->esquerda, saida);
+			*saida << noatual->verbete.get_Verbete() << " (" << noatual->verbete.get_Tipo() << ")" << endl;
+			Imprimir_Retirar_Verbetes(noatual->direita,saida);
+		}
 	}
 }
 

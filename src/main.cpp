@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
     }
 
     ofstream saida;
-    saida.open(arquivo_saida,ios::app);
+    saida.open(arquivo_saida,ios::out);
     if(!saida){
         throw "Não foi possivel abrir o arquivo de saida";
     }
@@ -95,19 +95,20 @@ int main(int argc, char *argv[]){
         No *raiz = NULL;
 
         do{
-            fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
+            if(fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado) != -1){
             string palavra_conv(palavra);
             string significado_conv(significado);
             palavra_conv.erase(0,1);
             significado_conv.erase(0,2);
             Verbete verbete(tipo, palavra_conv, significado_conv);
             raiz = dicionario_avl.inserir(raiz,verbete);
+            }
         } while(!feof(entrada));
 
         dicionario_avl.Imprimir_Dicionario(raiz,&saida);
 
-        //Remove os verbetes que têm pelo menos um significado
-        raiz = dicionario_avl.Remover_Verbetes(raiz);
+        // Retira os verbetes que têm pelo menos um significado, imprimindo aqueles que não possuem nenhum significado
+        dicionario_avl.Imprimir_Retirar_Verbetes(raiz,&saida);
 
         dicionario_avl.Destruir_Dicionario(raiz);
     }
@@ -118,13 +119,14 @@ int main(int argc, char *argv[]){
         char tipo;
 
         do{
-            fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado);
+            if(fscanf(entrada,"%c %[^]] %[^\n]%*c", &tipo, palavra, significado) != -1){
             string palavra_conv(palavra);
             string significado_conv(significado);
             palavra_conv.erase(0,1);
             significado_conv.erase(0,2);
             Verbete verbete(tipo, palavra_conv, significado_conv);
             dicionario_hash.Inserir(verbete);
+            }
         } while(!feof(entrada));
 
         // Ordena o dicionario utilizando o algoritmo quicksort
@@ -142,7 +144,5 @@ int main(int argc, char *argv[]){
             cout << "ERRO" << e << endl;
     }
 
-    
-
-    //desativaMemLog();
+    desativaMemLog();
 }

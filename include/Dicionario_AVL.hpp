@@ -30,6 +30,7 @@ class Dicionario_AVL{
         No* Remover_Verbetes(No* root);
         No* PesquisaRecursivo(No *no, string chave);
         void Imprimir_Dicionario(No *raiz, ofstream *saida);
+        void Imprimir_Retirar_Verbetes(No *noatual, ofstream *saida);
 };
 
 #endif

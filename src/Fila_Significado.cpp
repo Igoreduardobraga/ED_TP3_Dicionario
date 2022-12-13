@@ -71,19 +71,14 @@ void Fila_Significado::remover() //dequeue //pop
     }
 }
 
-void Fila_Significado::imprimir() //print
+void Fila_Significado::imprimir(ofstream* saida) //print
 {
-    ofstream saida;
-    saida.open("saida.txt",ios::app);
-    if(!saida){
-        throw "Não foi possivel abrir o arquivo de saida";
-    }
     No_Fila* temp = primeiro;
     unsigned short int cont = 1;
 
     while (temp != NULL){
-        saida << cont << ". ";
-        saida << temp->significado << endl;
+        *saida << cont << ". ";
+        *saida << temp->significado << endl;
         temp = temp->proximo;
         cont++;
     }

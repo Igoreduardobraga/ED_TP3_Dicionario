@@ -1,6 +1,7 @@
 #ifndef DICIONARIO_HASH
 #define DICIONARIO_HASH
 #include "Verbete.hpp"
+#include "memlog.h"
 #include <fstream>
 #include <iostream>
 #include <cstring>
