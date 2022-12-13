@@ -15,6 +15,7 @@ class Dicionario_Hash{
         //Quantos elementos, no maximo, vao ser adicionados
         static const int max_itens = 4997;
 
+        //Limite de elementos a serem adicionados para evitar extrapolar o máximo
         static const int max_posicoes = 4995;
 
         //quantos itens foram adicionados no vetor

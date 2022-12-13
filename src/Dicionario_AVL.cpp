@@ -143,59 +143,66 @@ No * Dicionario_AVL::minValueNode(No* node){
 	return current;
 }
 
-No* Dicionario_AVL::Remover_Verbetes(No* raiz){
-	//Descrição: Remove os nós da arvore cujo verbete tem pelo menos um significado
+No* Dicionario_AVL::Remover_Verbete(No* raiz, string chave){
+	//Descrição: Remove verbetes e faz o balaceamento da arvore, se necessário
 
+	if (raiz == NULL) 
+    	return raiz; 
+
+    if ( chave < raiz->verbete.get_Verbete() ) 
+        raiz->esquerda = Remover_Verbete(raiz->esquerda, chave); 
+  
+    else if( chave > raiz->verbete.get_Verbete() ) 
+        raiz->direita = Remover_Verbete(raiz->direita, chave); 
+  
+    else{ 
+	    if( (raiz->esquerda == NULL) || (raiz->direita == NULL) ) { 
+            No *temp = raiz->esquerda ? raiz->esquerda : raiz->direita; 
+  
+            if (temp == NULL) { 
+                temp = raiz; 
+                raiz = NULL; 
+            } 
+            else
+            *raiz = *temp;
+
+            free(temp); 
+        } 
+        else{ 
+            No* temp = minValueNode(raiz->direita); 
+  
+            raiz->verbete.get_Verbete() = temp->verbete.get_Verbete(); 
+  
+            raiz->direita = Remover_Verbete(raiz->direita, temp->verbete.get_Verbete()); 
+        }
+	}
 		
-		if( (raiz->esquerda == NULL) || (raiz->direita == NULL) )
-		{
-			No *temp = raiz->esquerda ? raiz->esquerda : raiz->direita;
-
-			if (temp == NULL)
-			{
-				temp = raiz;
-				raiz = NULL;
-			}
-			else
-			*raiz = *temp;
-
-			//free(temp);
-		}
-		else
-		{
-			No* temp = minValueNode(raiz->direita);
-
-			raiz->verbete = temp->verbete;
-
-			raiz->direita = Remover_Verbetes(raiz->direita);
-		}
-
-	if (raiz == NULL)
-		return raiz;
-
-	raiz->altura = 1 + max(altura(raiz->esquerda), altura(raiz->direita));
-
-	int balance = get_balanceamento(raiz);
-
-	if (balance > 1 && get_balanceamento(raiz->esquerda) >= 0)
-		return Rotacao_Direita(raiz);
-
-	if (balance > 1 && get_balanceamento(raiz->esquerda) < 0)
-	{
-		raiz->esquerda = Rotacao_Esquerda(raiz->esquerda);
-		return Rotacao_Direita(raiz);
-	}
-
-	if (balance < -1 && get_balanceamento(raiz->direita) <= 0)
-		return Rotacao_Esquerda(raiz);
-
-	if (balance < -1 && get_balanceamento(raiz->direita) > 0)
-	{
-		raiz->direita = Rotacao_Direita(raiz->direita);
-		return Rotacao_Esquerda(raiz);
-	}
-	else
-		return raiz;
+    if (raiz == NULL) 
+    	return raiz; 
+  
+    // Atualiza a altura do nó atual
+    raiz->altura = 1 + max(altura(raiz->esquerda), altura(raiz->direita)); 
+  
+	// Pega o fator de balanceamento do nó atual
+    int balance = get_balanceamento(raiz); 
+  
+    if (balance > 1 && get_balanceamento(raiz->esquerda) >= 0) 
+        return Rotacao_Direita(raiz); 
+  
+    if (balance > 1 && get_balanceamento(raiz->esquerda) < 0) { 
+        raiz->esquerda = Rotacao_Esquerda(raiz->esquerda); 
+        return Rotacao_Direita(raiz); 
+    } 
+  
+    if (balance < -1 && get_balanceamento(raiz->direita) <= 0) 
+        return Rotacao_Esquerda(raiz); 
+  
+    if (balance < -1 && get_balanceamento(raiz->direita) > 0) { 
+        raiz->direita = Rotacao_Direita(raiz->direita); 
+        return Rotacao_Esquerda(raiz); 
+    } 
+  
+    return raiz; 
 }
 
 void Dicionario_AVL::Imprimir_Dicionario(No *noatual, ofstream *saida){
@@ -229,14 +236,14 @@ void Dicionario_AVL::Imprimir_Retirar_Verbetes(No *noatual, ofstream *saida){
 	}
 }
 
-No* Dicionario_AVL::PesquisaRecursivo(No *no, string chave) {
-    if (no == NULL) {
-        //return ;
-    }
-    if (chave < no->verbete.get_Verbete())
-        return PesquisaRecursivo(no->esquerda, chave);
-    else if (chave > no->verbete.get_Verbete())
-        return PesquisaRecursivo(no->direita, chave);
-    else
-        return no;
+No* Dicionario_AVL::Pesquisa(No *raiz, string chave) {
+	//Descrição: Pesquisa um nó específico na árvore
+
+	if (raiz == NULL || raiz->verbete.get_Verbete() == chave)
+       return raiz;
+    
+    if (raiz->verbete.get_Verbete() < chave)
+       return Pesquisa(raiz->direita, chave);
+ 
+    return Pesquisa(raiz->esquerda, chave);
 }

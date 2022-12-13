@@ -33,6 +33,7 @@ bool Dicionario_Hash::estacheio(){
 
 int Dicionario_Hash::get_TamanhoAtual(){
     //Descrição: Fornece o tamanho atual do vetor da tabela hash
+
     return quantidade_itens;
 }
 
@@ -80,18 +81,6 @@ void Dicionario_Hash::Deletar_Verbetes(ofstream *saida){
             }
         }
     }
-}
-
-void Dicionario_Hash::Buscar_Inserir(Verbete& verbete){
-    // int local = FuncaoHash(verbete);
-    // while(estrutura[local].get_Verbete() != "vazio"){
-    //     if(estrutura[local].get_Verbete() == verbete.get_Verbete()){
-    //         estrutura[local].inserir_significado(verbete.get_Significado());
-    //         achou = true;
-    //         break;
-    //     }
-    //     local = (local+1) % max_posicoes;
-    // }
 }
 
 void Dicionario_Hash::Imprimir(ofstream *saida){

@@ -109,7 +109,7 @@ int main(int argc, char *argv[]){
 
         // Retira os verbetes que têm pelo menos um significado, imprimindo aqueles que não possuem nenhum significado
         dicionario_avl.Imprimir_Retirar_Verbetes(raiz,&saida);
-
+        
         dicionario_avl.Destruir_Dicionario(raiz);
     }
     // Implementação utilizando tabela hash
@@ -139,9 +139,10 @@ int main(int argc, char *argv[]){
     }
 
     fclose(entrada);
+    saida.close();
 
     } catch (const char *e){
-            cout << "ERRO" << e << endl;
+            cout << "ERRO: " << e << endl;
     }
 
     desativaMemLog();

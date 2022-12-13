@@ -27,8 +27,8 @@ class Dicionario_AVL{
         int get_balanceamento(No *N);
         No* inserir(No* no, Verbete verbete);
         No * minValueNode(No* no);
-        No* Remover_Verbetes(No* root);
-        No* PesquisaRecursivo(No *no, string chave);
+        No* Remover_Verbete(No* root, string chave);
+        No* Pesquisa(No *no, string chave);
         void Imprimir_Dicionario(No *raiz, ofstream *saida);
         void Imprimir_Retirar_Verbetes(No *noatual, ofstream *saida);
 };
